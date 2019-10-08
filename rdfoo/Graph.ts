@@ -8,23 +8,28 @@ import assert from 'power-assert'
 
 import shortid = require('shortid')
 import changeURIPrefix from './changeURIPrefix';
+import HybridDomain from './HybridDomain'
 
 export interface Watcher {
     unwatch():void
 }
 
-export default class Graph {
+export default class Graph extends HybridDomain {
 
     graph:RdfGraphArray
     private ignoreWatchers:boolean
+    domain:HybridDomain
 
     constructor(triples?:Array<any>) {
+
+        super()
 
         this.graph = triples ? new RdfGraphArray(triples) : new RdfGraphArray([])
 
         this._globalWatchers = new Array<() => void>()
         this._subjWatchers = new Map<string, Array<() => void>>()
         this.ignoreWatchers = false
+        this.domain = new HybridDomain()
     }
 
     match(s:string|null, p:string|null, o: string|number|null): Array<Triple> {
@@ -86,6 +91,17 @@ export default class Graph {
 
         return this.match(s, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', t).length > 0
 
+    }
+
+    get subjects():string[] {
+
+        let subjects:string[] = []
+
+        for(let k of Object.keys(this.graph._gspo)) {
+            subjects = subjects.concat(Object.keys(this.graph._gspo[k]))
+        }
+
+        return subjects
     }
 
     private fireWatchers(subj:string) {
@@ -355,6 +371,7 @@ export default class Graph {
     stopIgnoringWatchers() {
         this.ignoreWatchers = false
     }
+
 
 
 }
