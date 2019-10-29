@@ -7,18 +7,16 @@ import { Watcher } from "./Graph";
 
 export default abstract class Facade {
 
-    _graph: Graph
+    graph: Graph
     uri: string
 
     constructor(graph:Graph, uri:string) {
-
-        this._graph = graph
+        this.graph = graph
         this.uri = uri
-
     }
 
     getProperty(predicate) {
-        return this._graph.matchOne(this.uri, predicate, null)
+        return this.graph.matchOne(this.uri, predicate, null)
     }
 
     getUriProperty(predicate):string|undefined {
@@ -64,7 +62,7 @@ export default abstract class Facade {
 
 
     getProperties(predicate) {
-        return this._graph.match(this.uri, predicate, null)
+        return this.graph.match(this.uri, predicate, null)
     }
 
     getUriProperties(predicate): Array<string> {
@@ -78,16 +76,20 @@ export default abstract class Facade {
 
 
     setProperty(predicate:string, object:any) {
-        this._graph.removeMatches(this.uri, predicate, null)
-        this._graph.insert(this.uri, predicate, object)
+        this.graph.removeMatches(this.uri, predicate, null)
+        this.graph.insert(this.uri, predicate, object)
     }
 
     insertProperty(predicate:string, object:any) {
-        this._graph.insert(this.uri, predicate, object)
+        this.graph.insert(this.uri, predicate, object)
+    }
+
+    insertProperties(properties:Object) {
+        this.graph.insertProperties(this.uri, properties)
     }
 
     deleteProperty(predicate:string) {
-        this._graph.removeMatches(this.uri, predicate, null)
+        this.graph.removeMatches(this.uri, predicate, null)
     }
 
     setUriProperty(predicate:string, value:string|undefined) {
@@ -155,14 +157,14 @@ export default abstract class Facade {
 
     watch(cb:() => void):Watcher {
 
-        return this._graph.watchSubject(this.uri, cb)
+        return this.graph.watchSubject(this.uri, cb)
 
     }
 
     destroy() {
 
-        this._graph.removeMatches(null, null, this.uri)
-        this._graph.removeMatches(this.uri, null, null)
+        this.graph.removeMatches(null, null, this.uri)
+        this.graph.removeMatches(this.uri, null, null)
 
     }
 

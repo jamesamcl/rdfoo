@@ -8,28 +8,24 @@ import assert from 'power-assert'
 
 import shortid = require('shortid')
 import changeURIPrefix from './changeURIPrefix';
-import HybridDomain from './HybridDomain'
+import Facade from './Facade'
 
 export interface Watcher {
     unwatch():void
 }
 
-export default class Graph extends HybridDomain {
+export default class Graph {
 
     graph:RdfGraphArray
     private ignoreWatchers:boolean
-    domain:HybridDomain
 
     constructor(triples?:Array<any>) {
-
-        super()
 
         this.graph = triples ? new RdfGraphArray(triples) : new RdfGraphArray([])
 
         this._globalWatchers = new Array<() => void>()
         this._subjWatchers = new Map<string, Array<() => void>>()
         this.ignoreWatchers = false
-        this.domain = new HybridDomain()
     }
 
     match(s:string|null, p:string|null, o: string|number|null): Array<Triple> {
@@ -87,10 +83,8 @@ export default class Graph extends HybridDomain {
 
     }
 
-    hasType(s:string, t:string):boolean {
-
-        return this.match(s, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', t).length > 0
-
+    addAll(other:Graph) {
+        this.graph.addAll(other.graph)
     }
 
     get subjects():string[] {
@@ -231,30 +225,6 @@ export default class Graph extends HybridDomain {
     }
 
 
-
-    instancesOfType(type:string):Array<string> {
-
-       return this.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', type)
-                  .map(triple.subjectUri) as Array<string>
-    }
-
-    getType(uri:string):string|undefined {
-
-        const type:string|undefined = triple.objectUri(
-            this.matchOne(uri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
-        )
-
-        return type
-    }
-
-    getTypes(uri:string):string[] {
-
-        const types:any[] =
-            this.match(uri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
-                .map(triple.objectUri)
-
-        return types
-    }
 
     generateURI(template:string):string {
 
