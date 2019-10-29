@@ -1,9 +1,7 @@
 
 import * as node from './node'
 
-import { Triple } from 'rdf-graph-array'
-
-export function subjectUri(triple:Triple|undefined):string|undefined {
+export function subjectUri(triple:any):string|undefined {
 
     if(triple === undefined)
         return undefined
@@ -11,7 +9,7 @@ export function subjectUri(triple:Triple|undefined):string|undefined {
     return node.toUri(triple.subject)
 }
 
-export function predicateUri(triple:Triple|undefined):string|undefined {
+export function predicateUri(triple:any):string|undefined {
 
     if(triple === undefined)
         return undefined
@@ -19,7 +17,7 @@ export function predicateUri(triple:Triple|undefined):string|undefined {
     return node.toUri(triple.predicate)
 }
 
-export function objectUri(triple:Triple|undefined):string|undefined {
+export function objectUri(triple:any):string|undefined {
 
     if(triple === undefined)
         return undefined
@@ -27,7 +25,7 @@ export function objectUri(triple:Triple|undefined):string|undefined {
     return node.toUri(triple.object)
 }
 
-export function objectInt(triple:Triple|undefined):number|undefined {
+export function objectInt(triple:any):number|undefined {
 
     if(triple === undefined)
         return undefined
@@ -36,7 +34,7 @@ export function objectInt(triple:Triple|undefined):number|undefined {
 
 }
 
-export function objectFloat(triple:Triple|undefined):number|undefined {
+export function objectFloat(triple:any):number|undefined {
 
     if(triple === undefined)
         return undefined
@@ -45,7 +43,7 @@ export function objectFloat(triple:Triple|undefined):number|undefined {
 
 }
 
-export function objectBool(triple:Triple|undefined):boolean|undefined {
+export function objectBool(triple:any):boolean|undefined {
 
     if(triple === undefined)
         return undefined
@@ -54,7 +52,7 @@ export function objectBool(triple:Triple|undefined):boolean|undefined {
 
 }
 
-export function objectString(triple:Triple|undefined):string|undefined {
+export function objectString(triple:any):string|undefined {
 
     if(triple === undefined)
         return undefined

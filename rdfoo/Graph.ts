@@ -1,6 +1,4 @@
 
-import { Graph as RdfGraphArray, Triple } from 'rdf-graph-array'
-
 import * as triple from './triple'
 import * as node from './node'
 
@@ -10,13 +8,15 @@ import shortid = require('shortid')
 import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
 
+let RdfGraphArray = require('rdf-graph-array').Graph
+
 export interface Watcher {
     unwatch():void
 }
 
 export default class Graph {
 
-    graph:RdfGraphArray
+    graph:any
     private ignoreWatchers:boolean
 
     constructor(triples?:Array<any>) {
@@ -28,7 +28,7 @@ export default class Graph {
         this.ignoreWatchers = false
     }
 
-    match(s:string|null, p:string|null, o: string|number|null): Array<Triple> {
+    match(s:string|null, p:string|null, o: string|number|null): Array<any> {
 
         if(s === undefined || p === undefined || o === undefined) {
             console.dir(arguments)

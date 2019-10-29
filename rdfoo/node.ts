@@ -1,10 +1,9 @@
 
-import { RdfNode } from 'rdf-ext'
 import rdf = require('rdf-ext')
 
 import assert from 'power-assert'
 
-export function createUriNode(uri:string):RdfNode {
+export function createUriNode(uri:string):any {
 
     if(! (typeof(uri) === 'string')) {
         throw new Error('trying to create URI node for ' + (typeof uri) + ' ' + uri)
@@ -14,13 +13,13 @@ export function createUriNode(uri:string):RdfNode {
 
 }
 
-export function isUri(node:RdfNode):boolean {
+export function isUri(node:any):boolean {
 
     return node.interfaceName === 'NamedRdfNode'
 
 }
 
-export function toUri(node:RdfNode|undefined):string|undefined {
+export function toUri(node:any|undefined):string|undefined {
 
     if(node === undefined)
         return
@@ -35,13 +34,13 @@ export function toUri(node:RdfNode|undefined):string|undefined {
 
 }
 
-export function createIntNode(value:number):RdfNode {
+export function createIntNode(value:number):any {
 
     return rdf.createLiteral('' + value)
 
 }
 
-export function toInt(node:RdfNode|undefined):number|undefined {
+export function toInt(node:any|undefined):number|undefined {
 
     if(node === undefined)
         return
@@ -66,13 +65,13 @@ export function toInt(node:RdfNode|undefined):number|undefined {
 
 }
 
-export function createStringNode(value:string):RdfNode {
+export function createStringNode(value:string):any {
 
     return rdf.createLiteral('' + value)
 
 }
 
-export function toString(node:RdfNode|undefined):string|undefined {
+export function toString(node:any|undefined):string|undefined {
 
     if(node === undefined)
         return
@@ -89,19 +88,19 @@ export function toString(node:RdfNode|undefined):string|undefined {
 
 }
 
-export function createFloatNode(value:number):RdfNode {
+export function createFloatNode(value:number):any {
 
     return rdf.createLiteral('' + value)
 
 }
 
-export function isFloat(node:RdfNode):boolean {
+export function isFloat(node:any):boolean {
 
     return node.interfaceName === 'Literal'
 
 }
 
-export function toFloat(node:RdfNode|undefined):number|undefined {
+export function toFloat(node:any|undefined):number|undefined {
 
     if(node === undefined)
         return
@@ -118,13 +117,13 @@ export function toFloat(node:RdfNode|undefined):number|undefined {
 
 }
 
-export function createBoolNode(value:boolean):RdfNode {
+export function createBoolNode(value:boolean):any {
 
     return rdf.createLiteral(value ? 'true' : 'false')
 
 }
 
-export function toBool(node:RdfNode|undefined): boolean|undefined {
+export function toBool(node:any|undefined): boolean|undefined {
 
     if(node === undefined)
         return
