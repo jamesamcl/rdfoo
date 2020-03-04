@@ -8,7 +8,7 @@ import shortid = require('shortid')
 import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
 
-let RdfGraphArray = require('rdf-graph-array').Graph
+let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
 
 export interface Watcher {
     unwatch():void

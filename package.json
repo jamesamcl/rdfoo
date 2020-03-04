@@ -24,7 +24,7 @@
     "elementtree": "^0.1.7",
     "genbankjs": "0.1.0",
     "power-assert": "^1.4.4",
-    "rdf-graph-array": "git+https://github.com/udp/rdf-graph-array.git",
+    "rdf-graph-array-sboljs": "^0.3.1",
     "rdf-parser-n3": "^0.3.0",
     "rdf-parser-rdfxml": "^0.3.1",
     "rdf-serializer-xml": "^0.1.0",

@@ -1,7 +1,7 @@
 
 import Graph from './Graph'
 import rdf = require('rdf-ext')
-import RdfGraphArray = require('rdf-graph-array')
+import RdfGraphArray = require('rdf-graph-array-sboljs')
 
 export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 

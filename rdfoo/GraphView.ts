@@ -1,7 +1,7 @@
 
 import Facade from "./Facade";
 import Graph from './Graph'
-import { Triple } from 'rdf-graph-array'
+import { Triple } from 'rdf-graph-array-sboljs'
 
 export default abstract class GraphView {
 
