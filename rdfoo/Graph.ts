@@ -342,6 +342,14 @@ export default class Graph {
         this.ignoreWatchers = false
     }
 
+    toArray():any[] {
+        return this.graph.toArray()
+    }
+
+    clone():Graph {
+        return new Graph(this.graph.toArray())
+    }
+
 
 
 }
