@@ -1,13 +1,12 @@
 {
   "name": "rdfoo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A library for creating object oriented RDF abstractions in TypeScript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "bash test.sh",
-    "prepare": "tsc -d -p ./ --outDir dist/",
-    "prepublishOnly": "tsc -d -p ./ --outDir dist/"
+    "prepack": "tsc -d -p ./ --outDir dist/"
   },
   "repository": {
     "type": "git",
