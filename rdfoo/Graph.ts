@@ -376,7 +376,7 @@ export default class Graph {
             throw new Error('???')
         }
 
-        await parseRDF(this.graph, data, filetype)
+        await parseRDF(this, data, filetype)
     }
 
     startIgnoringWatchers() {

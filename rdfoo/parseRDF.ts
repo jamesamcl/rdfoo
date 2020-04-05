@@ -1,7 +1,7 @@
 
 import RdfParserXml = require('rdf-parser-rdfxml')
 import RdfParserN3 = require('rdf-parser-n3')
-import { Graph } from 'rdfoo';
+import Graph from './Graph'
 import { Filetype } from './identifyFiletype';
 
 export default async function parseRDF(graph:Graph, rdf:string, filetype:Filetype):Promise<void> {
