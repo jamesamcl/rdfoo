@@ -7,6 +7,8 @@ import assert from 'power-assert'
 import shortid = require('shortid')
 import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
+import identifyFiletype from './identifyFiletype';
+import parseRDF from './parseRDF';
 
 let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
 
@@ -332,6 +334,49 @@ export default class Graph {
             }
         }
 
+    }
+
+
+    static async loadURL(url, defaultURIPrefix?:string):Promise<Graph> {
+
+        let graph = new Graph()
+        await graph.loadURL(url, defaultURIPrefix)
+        return graph
+    }
+
+
+    async loadURL(url:string, defaultURIPrefix?:string):Promise<void> {
+
+        let res = await fetch(url)
+
+        if(!res) {
+            throw new Error('???')
+        }
+
+        let body = await res.text()
+
+        var mimeType:string|undefined = res.headers.get('content-type') || undefined
+
+        await this.loadString(body, defaultURIPrefix, mimeType)
+    }
+
+    static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<Graph> {
+
+        let graph = new Graph()
+        await graph.loadString(data, defaultURIPrefix, mimeType)
+        return graph
+
+    }
+
+    async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<void> {
+
+        let filetype = identifyFiletype(data, mimeType || null)
+
+        if(filetype === null) {
+            throw new Error('???')
+        }
+
+        await parseRDF(this.graph, data, filetype)
     }
 
     startIgnoringWatchers() {
