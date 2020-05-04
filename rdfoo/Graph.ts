@@ -9,6 +9,7 @@ import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
 import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
+import { fs } from 'mz';
 
 let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
 
@@ -360,6 +361,34 @@ export default class Graph {
         await this.loadString(body, defaultURIPrefix, mimeType)
     }
 
+
+    static async loadFile(filename, defaultURIPrefix?:string):Promise<Graph> {
+
+        let graph = new Graph()
+        await graph.loadFile(filename, defaultURIPrefix)
+        return graph
+    }
+
+
+    async loadFile(filename:string, defaultURIPrefix?:string):Promise<void> {
+        let str = (await fs.readFile(filename)).toString()
+        await this.loadString(str, defaultURIPrefix)
+    }
+
+    static async loadFilenameOrURL(filenameOrURL, defaultURIPrefix?:string):Promise<Graph> {
+        let graph = new Graph()
+        await graph.loadFilenameOrURL(filenameOrURL, defaultURIPrefix)
+        return graph
+    }
+
+
+    async loadFilenameOrURL(filenameOrURL:string, defaultURIPrefix?:string):Promise<void> {
+
+        return isURL(filenameOrURL) ?
+            this.loadURL(filenameOrURL, defaultURIPrefix) :
+            this.loadFile(filenameOrURL, defaultURIPrefix)
+    }
+
     static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<Graph> {
 
         let graph = new Graph()
@@ -399,3 +428,7 @@ export default class Graph {
 
 }
 
+
+function isURL(str:string):boolean {
+    return str.indexOf('://') !== -1 // TODO!
+}
