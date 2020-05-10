@@ -1,6 +1,6 @@
 
 import RdfParserXml = require('rdf-parser-rdfxml')
-import RdfParserN3 = require('rdf-parser-n3')
+import RdfParserN3 = require('@rdfoo/rdf-parser-n3')
 import Graph from './Graph'
 import { Filetype } from './identifyFiletype';
 

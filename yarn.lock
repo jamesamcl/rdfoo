@@ -2,6 +2,20 @@
 # yarn lockfile v1
 
 
+"@rdfoo/n3@^0.4.5":
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/@rdfoo/n3/-/n3-0.4.5.tgz#f2dbcdd00e81c3d8b3d6fc68379c958581446b63"
+  integrity sha512-otCzJT0E1OfyUe3NCHj0ZbFvq9dJNLTv30f/tyi8BXzVPdc2EpEg4k+diRFefC1dqadTpAaP+P6r01JOg9ngeg==
+
+"@rdfoo/rdf-parser-n3@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@rdfoo/rdf-parser-n3/-/rdf-parser-n3-0.4.0.tgz#4b025ec2cd2172f22216c17f7745aa9460e9dee2"
+  integrity sha512-Vn0QbchUmTjUVxtkvuNCPkCSonB+xzewkpXZcKdkPbgTFDKo09XzGr4auVC//y0ZH2l9B0+9OuS+m50gAnWLZg==
+  dependencies:
+    "@rdfoo/n3" "^0.4.5"
+    rdf-ext "^0.3.0"
+    rdf-parser-abstract "^0.3.0"
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
@@ -295,11 +309,6 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-n3@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/n3/-/n3-0.4.5.tgz#5b70d3ab6a21c9e8d4c9bda2a3d4d90909beb508"
-  integrity sha1-W3DTq2ohyejUyb2io9TZCQm+tQg=
-
 nanoid@^2.1.0:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.1.2.tgz#5c63a913f4fbf4afff2004c7bb42dee8e627baf4"
@@ -488,15 +497,6 @@ rdf-parser-dom@^0.3.0:
   dependencies:
     rdf-parser-abstract "^0.3.0"
     xmldom "^0.1.19"
-
-rdf-parser-n3@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/rdf-parser-n3/-/rdf-parser-n3-0.3.0.tgz#33f1e4a93007fb7562d5d00b6466343181995d69"
-  integrity sha1-M/HkqTAH+3Vi1dALZGY0MYGZXWk=
-  dependencies:
-    n3 "^0.4.5"
-    rdf-ext "^0.3.0"
-    rdf-parser-abstract "^0.3.0"
 
 rdf-parser-rdfxml@^0.3.1:
   version "0.3.1"
