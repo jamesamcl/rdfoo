@@ -1,6 +1,6 @@
 {
   "name": "rdfoo",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "description": "A library for creating object oriented RDF abstractions in TypeScript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -24,7 +24,7 @@
     "genbankjs": "0.1.0",
     "power-assert": "^1.4.4",
     "rdf-graph-array-sboljs": "^0.3.1",
-    "rdf-parser-n3": "^0.3.0",
+    "@rdfoo/rdf-parser-n3": "^0.4.0",
     "rdf-parser-rdfxml": "^0.3.1",
     "rdf-serializer-xml": "^0.1.0",
     "shortid": "^2.2.8",
