@@ -9,7 +9,7 @@ import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
 import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
-import { fs } from 'mz';
+import * as fs from 'fs'
 
 let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
 
@@ -371,8 +371,15 @@ export default class Graph {
 
 
     async loadFile(filename:string, defaultURIPrefix?:string):Promise<void> {
-        let str = (await fs.readFile(filename)).toString()
-        await this.loadString(str, defaultURIPrefix)
+        return new Promise((res, rej) => {
+            fs.readFile(filename, (err, data) => {
+                if(err)
+                    rej(err)
+                else {
+                    res(this.loadString(data + '', defaultURIPrefix))
+                }
+            })
+        })
     }
 
     static async loadFilenameOrURL(filenameOrURL, defaultURIPrefix?:string):Promise<Graph> {
