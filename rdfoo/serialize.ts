@@ -3,12 +3,19 @@ import Graph from "./Graph";
 
 import et = require('elementtree')
 
+import { objectUri } from './triple'
+
 let ElementTree = et.ElementTree
 let Element = et.Element
 let SubElement = et.SubElement
 let QName = et.QName
 
-export default function serialize(graph:Graph, defaultPrefixes:Map<string,string>, isOwnershipRelation:(triple:any) => boolean):string {
+export default function serialize(
+    graph:Graph,
+    defaultPrefixes:Map<string,string>,
+    isOwnershipRelation:(triple:any) => boolean,
+    preferredTypeNamespace:string
+):string {
 
     let prefixes:Map<string,string> = new Map(defaultPrefixes)
     let prefixesUsed:Map<string,boolean> = new Map()
@@ -23,7 +30,22 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
         let subject = nodeToURI(triple.subject)
         let type = nodeToURI(triple.object)
 
-        let subjectElem = Element(prefixify(type), {
+        if(subjectToElement.has(subject))
+            continue
+
+        let types = graph.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
+                .map(objectUri)
+                .filter(s => s !== undefined)
+                .map(s => s as string)
+
+        for(let type of types) {
+            if(type.indexOf(preferredTypeNamespace) === 0) {
+                types = [ type ]
+                break
+            }
+        }
+
+        let subjectElem = Element(prefixify(types[0]), {
             [prefixify('http://www.w3.org/1999/02/22-rdf-syntax-ns#about')]: subject
         })
 
