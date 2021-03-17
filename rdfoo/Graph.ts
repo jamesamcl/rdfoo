@@ -9,6 +9,8 @@ import changeURIPrefix from './changeURIPrefix';
 import Facade from './Facade'
 import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
+import serialize from './serialize';
+import N3Serializer from 'rdf-serializer-ntriples'
 
 let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
 
@@ -371,11 +373,16 @@ export default class Graph {
         return new Graph(this.graph.toArray())
     }
 
+    serializeXML() {
+        return serialize(this, new Map(), () => false, '')
+    }
+
+    serializeN3() {
+        let serializer = new (new N3Serializer()).Impl(this.graph)
+        console.dir(serializer)
+    }
+
 
 
 }
 
-
-function isURL(str:string):boolean {
-    return str.indexOf('://') !== -1 // TODO!
-}

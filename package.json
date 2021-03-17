@@ -30,8 +30,12 @@
     "power-assert": "^1.4.4",
     "rdf-graph-array-sboljs": "^0.3.1",
     "rdf-parser-rdfxml": "^0.3.1",
+    "rdf-serializer-ntriples": "^1.0.0",
     "rdf-serializer-xml": "^0.1.0",
     "shortid": "^2.2.8",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.7"
   }
 }
