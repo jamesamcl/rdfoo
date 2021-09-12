@@ -5,7 +5,7 @@ import RdfGraphArray = require('rdf-graph-array-sboljs')
 
 export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 
-    let triples = graph.graph._graph
+    let triples = graph.graph.toArray()
 
     let newGraph = new RdfGraphArray.Graph([])
 
@@ -15,11 +15,11 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
     for(let triple of triples) {
 
-        if(triple.predicate.nominalValue === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+        if(triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 
-            if(topLevels.has(triple.object.nominalValue)) {
+            if(topLevels.has(triple.object.value)) {
 
-                let subjectPrefix = prefix(triple.subject.nominalValue)
+                let subjectPrefix = prefix(triple.subject.value)
 
                 prefixes.add(subjectPrefix)
             }
@@ -35,9 +35,9 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
         let matched = false
 
         for(let prefix of prefixes) {
-            if(subject.nominalValue.indexOf(prefix) === 0) {
-                let newSubject = rdf.createNamedNode(newPrefix + subject.nominalValue.slice(prefix.length))
-                identityMap.set(subject.nominalValue, newSubject.nominalValue)
+            if(subject.value.indexOf(prefix) === 0) {
+                let newSubject = rdf.namedNode(newPrefix + subject.value.slice(prefix.length))
+                identityMap.set(subject.value, newSubject.value)
                 subject = newSubject
                 matched = true
                 break
@@ -49,11 +49,11 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
             continue
         }
 
-        if(object.interfaceName === 'NamedNode') {
+        if(object.termType === 'NamedNode') {
             for(let prefix of prefixes) {
-                if(object.nominalValue.indexOf(prefix) === 0) {
-                    let newObject = rdf.createNamedNode(newPrefix + object.nominalValue.slice(prefix.length))
-                    identityMap.set(object.nominalValue, newObject.nominalValue)
+                if(object.value.indexOf(prefix) === 0) {
+                    let newObject = rdf.namedNode(newPrefix + object.value.slice(prefix.length))
+                    identityMap.set(object.value, newObject.value)
                     object = newObject
                     break
                 }

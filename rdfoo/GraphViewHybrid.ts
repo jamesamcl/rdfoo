@@ -1,7 +1,7 @@
 
 import GraphView from "./GraphView";
 import Facade from "./Facade";
-import Graph from "./Graph";
+import Graph, { Node } from "./Graph";
 import GraphViewBasic from "./GraphViewBasic";
 
 export default class GraphViewHybrid extends GraphViewBasic {
@@ -17,10 +17,10 @@ export default class GraphViewHybrid extends GraphViewBasic {
         this.views.push(view)
     }
 
-    uriToFacade(uri:string):Facade|undefined {
+    subjectToFacade(subject:Node):Facade|undefined {
 
         for(let d of this.views) {
-            let f = d.uriToFacade(uri)
+            let f = d.subjectToFacade(subject)
             if(f !== undefined) {
                 return f
             }

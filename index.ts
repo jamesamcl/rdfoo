@@ -1,5 +1,5 @@
 
-import Graph from './rdfoo/Graph'
+import Graph, { Node, Edge } from './rdfoo/Graph'
 import { Watcher } from './rdfoo/Graph'
 import Facade from './rdfoo/Facade'
 import GraphView from './rdfoo/GraphView'
@@ -11,6 +11,10 @@ import serialize from './rdfoo/serialize'
 import changeURIPrefix from './rdfoo/changeURIPrefix'
 import identifyFiletype, { Filetype } from './rdfoo/identifyFiletype'
 import parseRDF from './rdfoo/parseRDF'
+import rdf = require('rdf-ext')
 
-export { Graph, GraphView, GraphViewHybrid, GraphViewBasic, Watcher, Facade, node, triple, serialize, changeURIPrefix, identifyFiletype, Filetype, parseRDF }
+let namedNode = rdf.namedNode
+let literal = rdf.literal
+
+export { Graph, GraphView, GraphViewHybrid, GraphViewBasic, Watcher, Facade, node, triple, serialize, changeURIPrefix, identifyFiletype, Filetype, parseRDF, rdf, namedNode, literal, Node, Edge }
 

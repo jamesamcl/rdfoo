@@ -1,6 +1,6 @@
 
 import Facade from "./Facade";
-import Graph from './Graph'
+import Graph, { Node } from './Graph'
 import { Triple } from 'rdf-graph-array-sboljs'
 
 export default abstract class GraphView {
@@ -11,6 +11,6 @@ export default abstract class GraphView {
         this.graph = graph
     }
 
-    abstract uriToFacade(uri:string):Facade|undefined
+    abstract subjectToFacade(subject:Node):Facade|undefined
 }
 

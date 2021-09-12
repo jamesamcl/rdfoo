@@ -2,62 +2,64 @@
 import rdf = require('rdf-ext')
 
 import assert from 'power-assert'
+import NamedNode = require('rdf-ext/lib/NamedNode')
+import { Term } from '@rdfjs/types'
 
-export function createUriNode(uri:string):any {
+export function createUriNode(uri:string):NamedNode {
 
     if(! (typeof(uri) === 'string')) {
         throw new Error('trying to create URI node for ' + (typeof uri) + ' ' + uri)
     }
 
-    return rdf.createNamedNode(uri)
+    return rdf.namedNode(uri)
 
 }
 
-export function isUri(node:any):boolean {
+export function isUri(node:Term):boolean {
 
-    return node.interfaceName === 'NamedRdfNode'
+    return node.termType === 'NamedNode'
 
 }
 
-export function toUri(node:any|undefined):string|undefined {
+export function toUri(node:Term|undefined):string|undefined {
 
     if(node === undefined)
         return
 
-    if(node.interfaceName !== 'NamedRdfNode') {
+    if(node.termType !== 'NamedNode') {
 
         //throw new Error('nodeToUri requires a NamedRdfNode, but found ' + node.interfaceName)
 
     }
 
-    return node.nominalValue
+    return node.value
 
 }
 
 export function createIntNode(value:number):any {
 
-    return rdf.createLiteral('' + value)
+    return rdf.literal('' + value)
 
 }
 
-export function toInt(node:any|undefined):number|undefined {
+export function toInt(node:Term):number|undefined {
 
     if(node === undefined)
         return
 
-    if(node.interfaceName !== 'Literal') {
+    if(node.termType !== 'Literal') {
 
         console.error(JSON.stringify(node))
 
-        throw new Error('Integer node must be a literal; instead got ' + node.interfaceName)
+        throw new Error('Integer node must be a literal; instead got ' + node.termType)
 
     }
 
-    const res = parseInt(node.nominalValue)
+    const res = parseInt(node.value)
 
     if(isNaN(res)) {
 
-        console.warn('parseInt returned NaN for ' + JSON.stringify(node.nominalValue))
+        console.warn('parseInt returned NaN for ' + JSON.stringify(node.value))
 
     }
 
@@ -67,7 +69,7 @@ export function toInt(node:any|undefined):number|undefined {
 
 export function createStringNode(value:string):any {
 
-    return rdf.createLiteral('' + value)
+    return rdf.literal('' + value)
 
 }
 
@@ -90,53 +92,53 @@ export function toString(node:any|undefined):string|undefined {
 
 export function createFloatNode(value:number):any {
 
-    return rdf.createLiteral('' + value)
+    return rdf.literal('' + value)
 
 }
 
-export function isFloat(node:any):boolean {
+export function isFloat(node:Term):boolean {
 
-    return node.interfaceName === 'Literal'
+    return node.termType === 'Literal'
 
 }
 
-export function toFloat(node:any|undefined):number|undefined {
+export function toFloat(node:Term):number|undefined {
 
     if(node === undefined)
         return
 
-    if(node.interfaceName !== 'Literal') {
+    if(node.termType !== 'Literal') {
 
         console.error(JSON.stringify(node))
 
-        throw new Error('Floating point node must be a literal; instead got ' + node.interfaceName)
+        throw new Error('Floating point node must be a literal; instead got ' + node.termType)
 
     }
 
-    return parseFloat(node.nominalValue)
+    return parseFloat(node.value)
 
 }
 
 export function createBoolNode(value:boolean):any {
 
-    return rdf.createLiteral(value ? 'true' : 'false')
+    return rdf.literal(value ? 'true' : 'false')
 
 }
 
-export function toBool(node:any|undefined): boolean|undefined {
+export function toBool(node:Term): boolean|undefined {
 
     if(node === undefined)
         return
 
-    if(node.interfaceName !== 'Literal') {
+    if(node.termType !== 'Literal') {
 
         console.error(JSON.stringify(node))
 
-        throw new Error('Boolean node must be a literal; instead got ' + node.interfaceName)
+        throw new Error('Boolean node must be a literal; instead got ' + node.termType)
 
     }
 
-    return node.nominalValue === 'true' ? true : false
+    return node.value === 'true' ? true : false
 
 }
 

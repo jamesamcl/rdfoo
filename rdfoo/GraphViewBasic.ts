@@ -1,7 +1,10 @@
 import GraphView from "./GraphView";
-import Graph from "./Graph";
+import Graph, { Node } from "./Graph";
 import Facade from "./Facade";
 import * as triple from './triple'
+import * as node from './node'
+
+import rdf = require('rdf-ext')
 
 export default class GraphViewBasic extends GraphView {
 
@@ -9,21 +12,24 @@ export default class GraphViewBasic extends GraphView {
         super(graph)
     }
 
-    uriToFacade(uri:string):Facade|undefined {
+    subjectToFacade(subject:Node):Facade|undefined {
         return undefined
     }
 
-    hasType(s:string, t:string):boolean {
-        return this.graph.match(s, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', t).length > 0
+    hasType(s:Node, t:string):boolean {
+        return this.graph.hasMatch(s, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', rdf.namedNode(t))
     }
 
-    instancesOfType(type:string):Array<string> {
+    instancesOfType(type:Node|string):Array<Node> {
+
+	if(typeof(type) === 'string')
+		type = node.createUriNode(type)
 
        return this.graph.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', type)
-                  .map(triple.subjectUri) as Array<string>
+       .map(t => t.subject)
     }
 
-    getType(uri:string):string|undefined {
+    getType(uri:Node):string|undefined {
 
         const type:string|undefined = triple.objectUri(
             this.graph.matchOne(uri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
@@ -32,7 +38,7 @@ export default class GraphViewBasic extends GraphView {
         return type
     }
 
-    getTypes(uri:string):string[] {
+    getTypes(uri:Node):string[] {
 
         const types:any[] =
             this.graph.match(uri, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)

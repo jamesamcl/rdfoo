@@ -2,28 +2,43 @@
 import * as triple from './triple'
 import * as node from './node'
 
-import Graph from "./Graph";
+import rdf = require('rdf-ext')
+
+import Graph, { Edge, Node } from "./Graph";
 import { Watcher } from "./Graph";
 
 export default abstract class Facade {
 
     graph: Graph
-    uri: string
+    subject: Node
 
-    constructor(graph:Graph, uri:string) {
+    constructor(graph:Graph, subject:Node) {
         this.graph = graph
-        this.uri = uri
+        this.subject = subject
     }
 
-    getProperty(predicate) {
-        return this.graph.matchOne(this.uri, predicate, null)
+    getProperty(predicate:Edge) {
+        return this.graph.matchOne(this.subject, predicate, null)?.object
     }
 
-    getUriProperty(predicate):string|undefined {
+    getRequiredProperty(predicate:Edge) {
+        let r =  this.graph.matchOne(this.subject, predicate, null)
+
+	if(!r) {
+            throw new Error('missing property ' + predicate)
+	}
+
+	return r.object
+    }
+
+    getUriProperty(predicate:Edge):string|undefined {
         return triple.objectUri(this.getProperty(predicate))
     }
 
-    getRequiredUriProperty(predicate):string {
+    getRequiredUriProperty(predicate:Edge|string):string {
+
+	if(typeof(predicate) === 'string')
+		predicate = rdf.namedNode(predicate)
 
         const prop = triple.objectUri(this.getProperty(predicate))
 
@@ -33,11 +48,11 @@ export default abstract class Facade {
         return prop
     }
 
-    getStringProperty(predicate):string|undefined {
+    getStringProperty(predicate:Edge):string|undefined {
         return triple.objectString(this.getProperty(predicate))
     }
 
-    getRequiredStringProperty(predicate):string {
+    getRequiredStringProperty(predicate:Edge):string {
 
         const prop = triple.objectString(this.getProperty(predicate))
 
@@ -47,25 +62,26 @@ export default abstract class Facade {
         return prop
     }
 
-    getIntProperty(predicate):number|undefined {
+    getIntProperty(predicate:Edge):number|undefined {
         return triple.objectInt(this.getProperty(predicate))
     }
 
-    getBoolProperty(predicate):boolean|undefined {
+    getBoolProperty(predicate:Edge):boolean|undefined {
         return triple.objectBool(this.getProperty(predicate))
     }
 
-    getFloatProperty(predicate):number|undefined {
+    getFloatProperty(predicate:Edge):number|undefined {
         return triple.objectFloat(this.getProperty(predicate))
     }
 
 
 
-    getProperties(predicate) {
-        return this.graph.match(this.uri, predicate, null)
+    getProperties(predicate:Edge) {
+        return this.graph.match(this.subject, predicate, null)
+		.map(t => t.object)
     }
 
-    getUriProperties(predicate): Array<string> {
+    getUriProperties(predicate:Edge): Array<string> {
         return this.getProperties(predicate).map(triple.objectUri).filter((el) => !!el) as Array<string>
     }
 
@@ -75,21 +91,21 @@ export default abstract class Facade {
 
 
 
-    setProperty(predicate:string, object:any) {
-        this.graph.removeMatches(this.uri, predicate, null)
-        this.graph.insert(this.uri, predicate, object)
+    setProperty(predicate:string, object:Node) {
+        this.graph.removeMatches(this.subject, predicate, null)
+        this.graph.insertTriple(this.subject, predicate, object)
     }
 
-    insertProperty(predicate:string, object:any) {
-        this.graph.insert(this.uri, predicate, object)
+    insertProperty(predicate:string, object:Node) {
+        this.graph.insertTriple(this.subject, predicate, object)
     }
 
-    insertProperties(properties:Object) {
-        this.graph.insertProperties(this.uri, properties)
+    insertProperties(properties:{ [p:string]: (Node|Node[]) }) {
+        this.graph.insertProperties(this.subject, properties)
     }
 
     deleteProperty(predicate:string) {
-        this.graph.removeMatches(this.uri, predicate, null)
+        this.graph.removeMatches(this.subject, predicate, null)
     }
 
     setUriProperty(predicate:string, value:string|undefined) {
@@ -157,14 +173,14 @@ export default abstract class Facade {
 
     watch(cb:() => void):Watcher {
 
-        return this.graph.watchSubject(this.uri, cb)
+        return this.graph.watchSubject(this.subject.value, cb)
 
     }
 
     destroy() {
 
-        this.graph.removeMatches(null, null, this.uri)
-        this.graph.removeMatches(this.uri, null, null)
+        this.graph.removeMatches(null, null, this.subject)
+        this.graph.removeMatches(this.subject, null, null)
 
     }
 

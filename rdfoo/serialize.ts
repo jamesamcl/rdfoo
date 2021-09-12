@@ -27,7 +27,7 @@ export default function serialize(
 
     for(let triple of graph.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)) {
 
-        let subject = nodeToURI(triple.subject)
+        let subject = triple.subject
         let type = nodeToURI(triple.object)
 
         if(subjectToElement.has(subject))
@@ -88,14 +88,14 @@ export default function serialize(
             }
         }
 
-        if(triple.object.interfaceName === 'NamedNode') {
+        if(triple.object.termType === 'NamedNode') {
             SubElement(subjectElem, prefixify(p), {
                 [prefixify('http://www.w3.org/1999/02/22-rdf-syntax-ns#resource')]: nodeToURI(triple.object)
             })
             continue
         }
 
-        if(triple.object.interfaceName === 'Literal') {
+        if(triple.object.termType === 'Literal') {
 
             let attr:any = {}
 
@@ -103,12 +103,12 @@ export default function serialize(
 
             let elem = SubElement(subjectElem, prefixify(p), attr)
 
-            elem.text = triple.object.nominalValue
+            elem.text = triple.object.value
 
             continue
         }
 
-        throw new Error('Unknown interfaceName ' + triple.object.interfaceName)
+        throw new Error('Unknown interfaceName ' + triple.object.termType)
     }
 
 

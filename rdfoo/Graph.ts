@@ -5,49 +5,60 @@ import * as node from './node'
 import assert from 'power-assert'
 
 import shortid = require('shortid')
-import changeURIPrefix from './changeURIPrefix';
-import Facade from './Facade'
 import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
 import serialize from './serialize';
-import N3Serializer from 'rdf-serializer-ntriples'
 
-let RdfGraphArray = require('rdf-graph-array-sboljs').Graph
+import rdf = require('rdf-ext')
+import { Term } from '@rdfjs/types'
+import DatasetExt = require('rdf-ext/lib/Dataset');
+import NamedNode = require('rdf-ext/lib/NamedNode');
+import Literal = require('rdf-ext/lib/Literal');
+import BlankNode = require('rdf-ext/lib/BlankNode');
+import VariableExt = require('rdf-ext/lib/Variable');
+
+import formats = require('@rdfjs/formats-common')
+
+import streamToString = require('stream-to-string')
 
 export interface Watcher {
     unwatch():void
 }
 
+export type Edge = NamedNode|VariableExt|string
+export type NodeIdentifier = NamedNode|BlankNode|VariableExt
+export type NodeLiteral = Literal
+export type Node = NodeIdentifier|NodeLiteral
+
 export default class Graph {
 
-    graph:any
+    graph:DatasetExt
     private ignoreWatchers:boolean
 
     constructor(triples?:Array<any>) {
 
-        this.graph = triples ? new RdfGraphArray(triples) : new RdfGraphArray([])
+        this.graph = triples ? rdf.graph(triples) : rdf.graph([])
 
         this._globalWatchers = new Array<() => void>()
         this._subjWatchers = new Map<string, Array<() => void>>()
         this.ignoreWatchers = false
     }
 
-    match(s:string|null, p:string|null, o: string|number|null): Array<any> {
+    match(s:Node|null, p:Edge|null, o:Node|null) {
 
         if(s === undefined || p === undefined || o === undefined) {
             console.dir(arguments)
             throw new Error('one of s/p/o were undefined')
         }
 
-        
-        const res = this.graph.match(s, p, o).toArray()
+	if(typeof(p) === 'string')
+		p = rdf.namedNode(p)
 
-        // console.log('Match { ' + s + ', ' + p + ', ' + o + ' } => ' + res.length)
-
-        return res
+        return this.graph.match(s, p, o).toArray() 
+	
     }
 
-    matchOne(s:string|null, p:string|null, o: string|number|null) {
+    matchOne(s:Node|null, p:Edge|null, o:Node|null) {
 
         if(s === undefined || p === undefined || o === undefined)
             throw new Error('one of s/p/o were undefined')
@@ -78,7 +89,7 @@ export default class Graph {
         return matches[0]
     }
 
-    hasMatch(s:string|null, p: string|null, o: string|number|null):boolean {
+    hasMatch(s:Node|null, p:Edge|null, o:Node|null) {
 
         if(s === undefined || p === undefined || o === undefined)
             throw new Error('one of s/p/o were undefined')
@@ -93,13 +104,8 @@ export default class Graph {
 
     get subjects():string[] {
 
-        let subjects:string[] = []
-
-        for(let k of Object.keys(this.graph._gspo)) {
-            subjects = subjects.concat(Object.keys(this.graph._gspo[k]))
-        }
-
-        return subjects
+	return Object.keys(
+		this.graph['_graphs'][''].subjects).map(s => this.graph['_entities'][s])
     }
 
     private fireWatchers(subj:string) {
@@ -126,39 +132,37 @@ export default class Graph {
 
     }
 
-    insert(...args : any[]):void {
+    insertTriple(s:Node, p:Edge, o:Node) {
 
-        if(arguments.length === 3) {
 
-            this.graph.add({
-                subject: node.createUriNode(arguments[0]),
-                predicate: node.createUriNode(arguments[1]),
-                object: arguments[2],
-            })
+	if(typeof(p) === 'string')
+		p = rdf.namedNode(p)
 
-            this.touchSubject(arguments[0])
+		// TODO type checking
+	this.graph.add(rdf.triple(s as NodeIdentifier, p, o))
+	this.touchSubject(s.value)
+    }
 
-        } else {
 
-            assert(Array.isArray(arguments[0]))
+    insertTriples(triples:{subject:Node, predicate:Edge, object:Node}[]):void {
 
-            const w:Set<string> = new Set<string>()
+	const w:Set<string> = new Set<string>()
 
-            arguments[0].forEach((t) => {
+	    for (let t of triples) {
 
-                //console.log('Insert { ' + t.subject + ', ' + t.predicate + ', ' + t.object + ' }')
+		    let [s, p, o] = [t.subject, t.predicate, t.object]
 
-                this.insert(t.subject, t.predicate, t.object)
+		    //console.log('Insert { ' + t.subject + ', ' + t.predicate + ', ' + t.object + ' }')
 
-                w.add(t.subject)
+		    this.insertTriple(s, p, o)
 
-            })
+		    w.add(s.value)
 
-            w.forEach((uri:string) => {
-                this.touchSubject(uri)
-            })
+	    }
 
-        }
+	w.forEach((uri:string) => {
+		this.touchSubject(uri)
+	})
     }
 
     touchSubject(subject:string) {
@@ -166,11 +170,11 @@ export default class Graph {
         this.fireGlobalWatchers()
     }
 
-    insertProperties(subject:string, properties:Object):void {
+    insertProperties(subject:Node, properties:{ [p:string]: (Node[]|Node) } ):void {
 
         var triples:any[] = []
 
-        Object.keys(properties).forEach((property) => {
+        for(let property of Object.keys(properties)) {
 
             assert(('' + property) !== 'undefined')
 
@@ -181,8 +185,8 @@ export default class Graph {
                 value.forEach((value) => {
 
                     triples.push({
-                        subject: subject,
-                        predicate: property,
+                        subject,
+                        predicate: rdf.namedNode(property),
                         object: value
                     })
 
@@ -191,23 +195,28 @@ export default class Graph {
             } else {
 
                 triples.push({
-                    subject: subject,
-                    predicate: property,
+                    subject,
+                    predicate: rdf.namedNode(property),
                     object: value
                 })
 
             }
 
-        })
+        }
 
-        this.insert(triples)
+        this.insertTriples(triples)
 
     }
 
-    removeMatches(s:string|null, p:string|null, o:string|number|null):void {
+    removeMatches(s:Node|null, p:Edge|null, o:Node|null):void {
 
         if(s === undefined || p === undefined || o === undefined)
             throw new Error('one of s/p/o were undefined')
+
+
+	if(typeof(p) === 'string')
+		p = rdf.namedNode(p)
+
 
         //console.log('Remove matches { ' + s + ', ' + p + ', ' + o + ' }')
 
@@ -216,10 +225,11 @@ export default class Graph {
         const matches = this.match(s, p, o)
 
         matches.forEach((t) => {
-            w.add(t.subject)
+            w.add(t.subject.value)
         })
 
-        this.graph.removeMatches(s, p, o)
+
+        this.graph.removeMatches( s, p, o)
 
         w.forEach((uri: string) => {
             this.touchSubject(uri)
@@ -244,7 +254,7 @@ export default class Graph {
 
             ++ n
 
-            if(this.hasMatch(uri, null, null))
+            if(this.hasMatch(rdf.namedNode(uri), null, null))
                 continue
 
             return uri
@@ -253,35 +263,36 @@ export default class Graph {
 
     }
 
-    purgeSubject(subject:string):void {
+    purgeSubject(s:Node):void {
+
         //console.log('purge ' + subject)
-        this.graph.removeMatches(subject, null, null)
-        this.graph.removeMatches(null, null, subject)
+        this.graph.removeMatches(s, null, null)
+        this.graph.removeMatches(null, null, s)
     }
 
-    replaceURI(oldURI:string, newURI:string) {
+    replaceSubject(oldSubject:Node, newSubject:Node) {
 
         // TODO: do this in-place instead of creating a new graph
         //
-        let newGraph = new RdfGraphArray()
+        let newGraph = rdf.graph()
         
-        for(let triple of this.graph._graph) {
+        for(let triple of this.graph.toArray()) {
 
-            newGraph.add({
-                subject: replace(triple.subject),
-                predicate: replace(triple.predicate),
-                object: replace(triple.object)
-            })
+            newGraph.add(rdf.triple(
+                replace(triple.subject) as NamedNode,
+                replace(triple.predicate) as NamedNode,
+                replace(triple.object)
+	    ))
         }
 
         this.graph = newGraph
 
-        function replace(n) {
-            if(n.interfaceName !== 'NamedNode')
+        function replace(n:Literal|NamedNode|BlankNode|VariableExt):Literal|NamedNode|BlankNode|VariableExt {
+            if(n.termType !== 'NamedNode')
                 return n
-            if(n.nominalValue !== oldURI)
+            if(n.value !== oldSubject.value)
                 return n
-            return node.createUriNode(newURI)
+            return node.createUriNode(newSubject.value)
         }
     }
 
@@ -377,11 +388,29 @@ export default class Graph {
         return serialize(this, new Map(), () => false, '')
     }
 
-    serializeN3() {
-        let serializer = new (new N3Serializer()).Impl(this.graph)
-        console.dir(serializer)
+    async serializeN3():Promise<string> {
+
+	return await streamToString(
+		new (formats.serializers.get('text/n3').Impl)(this.graph.toStream())
+	)
+
     }
 
+    async serializeTurtle():Promise<string> {
+
+	return await streamToString(
+		new (formats.serializers.get('text/turtle').Impl)(this.graph.toStream())
+	)
+
+    }
+
+    async serializeJSONLD():Promise<string> {
+
+	return await streamToString(
+		new (formats.serializers.get('application/ld+json').Impl)(this.graph.toStream())
+	)
+
+    }
 
 
 }
