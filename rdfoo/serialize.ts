@@ -108,7 +108,7 @@ export default function serialize(
             continue
         }
 
-        throw new Error('Unknown interfaceName ' + triple.object.termType)
+        throw new Error('Unknown termType ' + triple.object.termType)
     }
 
 
@@ -138,13 +138,13 @@ export default function serialize(
 
     function nodeToURI(node):string {
 
-        if(node.interfaceName !== 'NamedNode')
+        if(node.termType !== 'NamedNode')
             throw new Error('expected NamedNode but found ' + JSON.stringify(node))
 
-        if(typeof node.nominalValue !== 'string')
-            throw new Error('nominalValue not a string?')
+        if(typeof node.value !== 'string')
+            throw new Error('value not a string?')
 
-        return node.nominalValue
+        return node.value
     }
 
     function prefixify(iri) {

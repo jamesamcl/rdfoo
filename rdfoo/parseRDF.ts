@@ -12,18 +12,13 @@ export default async function parseRDF(graph:Graph, rdf:string, filetype:Filetyp
 	s.push(null)
 
 
-    let parser:any = null
-
 
     if(filetype === Filetype.NTriples) {
-	    graph.graph.import(formats.parsers.import('text/n3', s))
+	    await graph.graph.import(formats.parsers.import('text/n3', s))
     } else if(filetype === Filetype.RDFXML) {
-	    graph.graph.import(formats.parsers.import('application/rdf+xml', s))
+	    await graph.graph.import(formats.parsers.import('application/rdf+xml', s))
     } else {
         throw new Error('Unknown type ' + filetype)
     }
 
-    await parser.process(rdf, (triple) => {
-        graph.graph.add(triple)
-    })
 }

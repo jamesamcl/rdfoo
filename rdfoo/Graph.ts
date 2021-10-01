@@ -20,6 +20,7 @@ import VariableExt = require('rdf-ext/lib/Variable');
 import formats = require('@rdfjs/formats-common')
 
 import streamToString = require('stream-to-string')
+import QuadExt = require('rdf-ext/lib/Quad');
 
 export interface Watcher {
     unwatch():void
@@ -376,7 +377,7 @@ export default class Graph {
         this.ignoreWatchers = false
     }
 
-    toArray():any[] {
+    toArray():QuadExt[] {
         return this.graph.toArray()
     }
 
