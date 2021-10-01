@@ -106,7 +106,7 @@ export default class Graph {
     get subjects():string[] {
 
 	return Object.keys(
-		this.graph['_graphs'][''].subjects).map(s => this.graph['_entities'][s])
+		this.graph['_graphs']['']?.subjects || []).map(s => this.graph['_entities'][s])
     }
 
     private fireWatchers(subj:string) {
