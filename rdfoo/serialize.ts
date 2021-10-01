@@ -27,13 +27,13 @@ export default function serialize(
 
     for(let triple of graph.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)) {
 
-        let subject = triple.subject
+        let subject = nodeToURI(triple.subject)
         let type = nodeToURI(triple.object)
 
         if(subjectToElement.has(subject))
             continue
 
-        let types = graph.match(subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
+        let types = graph.match(triple.subject, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', null)
                 .map(objectUri)
                 .filter(s => s !== undefined)
                 .map(s => s as string)
