@@ -1,13 +1,13 @@
 
 import Graph from './Graph'
 import rdf = require('rdf-ext')
-import RdfGraphArray = require('rdf-graph-array-sboljs')
+import DatasetExt = require('rdf-ext/lib/Dataset');
 
 export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 
     let triples = graph.graph.toArray()
 
-    let newGraph = new RdfGraphArray.Graph([])
+    let newGraph:DatasetExt = rdf.graph([])
 
     let prefixes:Set<string> = new Set()
 
@@ -60,7 +60,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
             }
         }
 
-        newGraph.add({ subject, predicate, object })
+        newGraph.add(rdf.triple(subject, predicate, object))
 
     }
 

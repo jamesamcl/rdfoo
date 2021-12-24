@@ -6,7 +6,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "test": "bash test.sh",
-    "prepare": "tsc -d -p ./ --outDir dist/"
+    "prepare": "tsc -d -p ./ --outDir dist/",
+    "build": "tsc -d -p ./ --outDir dist/"
   },
   "repository": {
     "type": "git",
