@@ -25,6 +25,10 @@ export default class GraphViewBasic extends GraphView {
 	if(typeof(type) === 'string')
 		type = node.createUriNode(type)
 
+console.log('match type' ,type)
+       console.log( this.graph.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', type)
+       .map(t => t.subject))
+
        return this.graph.match(null, 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type', type)
        .map(t => t.subject)
     }

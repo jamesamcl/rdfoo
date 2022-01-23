@@ -17,7 +17,7 @@ export default abstract class Facade {
         this.subject = subject
     }
 
-    getProperty(predicate:Edge) {
+    getProperty(predicate:Edge):Node|undefined {
         return this.graph.matchOne(this.subject, predicate, null)?.object
     }
 
@@ -32,7 +32,7 @@ export default abstract class Facade {
     }
 
     getUriProperty(predicate:Edge):string|undefined {
-        return triple.objectUri(this.getProperty(predicate))
+        return this.getProperty(predicate)?.value
     }
 
     getRequiredUriProperty(predicate:Edge|string):string {
@@ -63,37 +63,47 @@ export default abstract class Facade {
     }
 
     getIntProperty(predicate:Edge):number|undefined {
-        return triple.objectInt(this.getProperty(predicate))
+        let prop = this.getProperty(predicate)?.value
+        if(prop === undefined)
+            return undefined
+        return parseInt(prop)
     }
 
     getBoolProperty(predicate:Edge):boolean|undefined {
-        return triple.objectBool(this.getProperty(predicate))
+        let prop = this.getProperty(predicate)?.value
+        if(prop === undefined)
+            return undefined
+        return prop === 'true'
     }
 
     getFloatProperty(predicate:Edge):number|undefined {
-        return triple.objectFloat(this.getProperty(predicate))
+        let prop = this.getProperty(predicate)?.value
+        if(prop === undefined)
+            return undefined
+        return parseFloat(prop)
     }
 
 
 
-    getProperties(predicate:Edge) {
+    getProperties(predicate:Edge):Node[] {
         return this.graph.match(this.subject, predicate, null)
 		.map(t => t.object)
     }
 
     getUriProperties(predicate:Edge): Array<string> {
-        return this.getProperties(predicate).map(triple.objectUri).filter((el) => !!el) as Array<string>
+        return this.getProperties(predicate).map(prop => prop.value).filter((el) => !!el) as Array<string>
     }
 
     getStringProperties(predicate): Array<string|undefined> {
-        return this.getProperties(predicate).map(triple.objectString).filter((el) => !!el) as Array<string>
+        return this.getProperties(predicate).map(prop => prop.value).filter((el) => !!el) as Array<string>
     }
 
 
 
-    setProperty(predicate:string, object:Node) {
+    setProperty(predicate:string, object:Node|undefined) {
         this.graph.removeMatches(this.subject, predicate, null)
-        this.graph.insertTriple(this.subject, predicate, object)
+        if(object !== undefined)
+            this.graph.insertTriple(this.subject, predicate, object)
     }
 
     insertProperty(predicate:string, object:Node) {
