@@ -49,7 +49,7 @@ export default abstract class Facade {
     }
 
     getStringProperty(predicate:Edge):string|undefined {
-        return triple.objectString(this.getProperty(predicate))
+        return this.getProperty(predicate)?.value
     }
 
     getRequiredStringProperty(predicate:Edge):string {
