@@ -40,7 +40,7 @@ export default abstract class Facade {
 	if(typeof(predicate) === 'string')
 		predicate = rdf.namedNode(predicate)
 
-        const prop = triple.objectUri(this.getProperty(predicate))
+        const prop = this.getProperty(predicate)?.value
 
         if(prop === undefined)
             throw new Error('missing property ' + predicate)
@@ -54,7 +54,7 @@ export default abstract class Facade {
 
     getRequiredStringProperty(predicate:Edge):string {
 
-        const prop = triple.objectString(this.getProperty(predicate))
+        const prop = this.getProperty(predicate)?.value
 
         if(prop === undefined)
             throw new Error('missing property ' + predicate)
