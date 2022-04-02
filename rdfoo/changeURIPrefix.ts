@@ -15,8 +15,10 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
     for(let triple of triples) {
 
+        // is this triple of the form   <s> a <o>  ?
         if(triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 
+            // is the object one of the specified top levels?
             if(topLevels.has(triple.object.value)) {
 
                 let subjectPrefix = prefix(triple.subject.value)

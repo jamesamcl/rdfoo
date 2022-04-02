@@ -6,6 +6,7 @@ import rdf = require('rdf-ext')
 
 import Graph, { Edge, Node } from "./Graph";
 import { Watcher } from "./Graph";
+import NamedNode = require('rdf-ext/lib/NamedNode');
 
 export default abstract class Facade {
 
@@ -15,6 +16,15 @@ export default abstract class Facade {
     constructor(graph:Graph, subject:Node) {
         this.graph = graph
         this.subject = subject
+    }
+
+    get uri():string {
+        
+        if(this.subject.termType === 'NamedNode')
+            return this.subject.value
+        else
+            throw new Error('not a NamedNode')
+
     }
 
     getProperty(predicate:Edge):Node|undefined {

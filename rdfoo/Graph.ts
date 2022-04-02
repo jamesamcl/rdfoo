@@ -2,8 +2,6 @@
 import * as triple from './triple'
 import * as node from './node'
 
-import assert from 'power-assert'
-
 import shortid = require('shortid')
 import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
@@ -176,8 +174,6 @@ export default class Graph {
         var triples:any[] = []
 
         for(let property of Object.keys(properties)) {
-
-            assert(('' + property) !== 'undefined')
 
             var value = properties[property]
 

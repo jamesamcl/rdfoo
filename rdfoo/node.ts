@@ -1,7 +1,6 @@
 
 import rdf = require('rdf-ext')
 
-import assert from 'power-assert'
 import NamedNode = require('rdf-ext/lib/NamedNode')
 import { Term } from '@rdfjs/types'
 
