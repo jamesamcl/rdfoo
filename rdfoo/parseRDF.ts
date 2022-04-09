@@ -1,11 +1,10 @@
 
 import Graph from './Graph'
 import { Filetype } from './identifyFiletype';
-import formats = require('@rdfjs/formats-common')
-var Readable = require('stream').Readable
+import formats from './formats'
+import { Readable } from 'readable-stream'
 
 export default async function parseRDF(graph:Graph, rdf:string, filetype:Filetype):Promise<void> {
-
 
 	var s = new Readable()
 	s.push(rdf)

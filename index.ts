@@ -11,7 +11,7 @@ import serialize from './rdfoo/serialize'
 import changeURIPrefix from './rdfoo/changeURIPrefix'
 import identifyFiletype, { Filetype } from './rdfoo/identifyFiletype'
 import parseRDF from './rdfoo/parseRDF'
-import rdf = require('rdf-ext')
+import rdf from 'rdf-ext'
 
 let namedNode = rdf.namedNode
 let literal = rdf.literal

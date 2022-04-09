@@ -7,7 +7,7 @@ import identifyFiletype from './identifyFiletype';
 import parseRDF from './parseRDF';
 import serialize from './serialize';
 
-import rdf = require('rdf-ext')
+import rdf from 'rdf-ext'
 import { Term } from '@rdfjs/types'
 import DatasetExt = require('rdf-ext/lib/Dataset');
 import NamedNode = require('rdf-ext/lib/NamedNode');
@@ -15,7 +15,7 @@ import Literal = require('rdf-ext/lib/Literal');
 import BlankNode = require('rdf-ext/lib/BlankNode');
 import VariableExt = require('rdf-ext/lib/Variable');
 
-import formats = require('@rdfjs/formats-common')
+import formats = require('./formats')
 
 import streamToString = require('stream-to-string')
 import QuadExt = require('rdf-ext/lib/Quad');
@@ -36,14 +36,14 @@ export default class Graph {
 
     constructor(triples?:Array<any>) {
 
-        this.graph = triples ? rdf.graph(triples) : rdf.graph([])
+        this.graph = triples ? rdf.dataset(triples) : rdf.dataset([])
 
         this._globalWatchers = new Array<() => void>()
         this._subjWatchers = new Map<string, Array<() => void>>()
         this.ignoreWatchers = false
     }
 
-    match(s:Node|null, p:Edge|null, o:Node|null) {
+    match(s:Node|null, p:Edge|null, o:Node|null):QuadExt[] {
 
         if(s === undefined || p === undefined || o === undefined) {
             console.dir(arguments)
@@ -53,7 +53,7 @@ export default class Graph {
 	if(typeof(p) === 'string')
 		p = rdf.namedNode(p)
 
-        return this.graph.match(s, p, o).toArray() 
+        return Array.from(this.graph.match(s, p, o))
 	
     }
 
@@ -138,7 +138,7 @@ export default class Graph {
 		p = rdf.namedNode(p)
 
 		// TODO type checking
-	this.graph.add(rdf.triple(s as NodeIdentifier, p, o))
+	this.graph.add(rdf.quad(s as NodeIdentifier, p, o))
 	this.touchSubject(s.value)
     }
 
@@ -271,9 +271,9 @@ export default class Graph {
 
         // TODO: do this in-place instead of creating a new graph
         //
-        let newGraph = rdf.graph()
+        let newGraph = rdf.dataset()
         
-        for(let triple of this.graph.toArray()) {
+        for(let triple of this.graph) {
 
             newGraph.add(rdf.triple(
                 replace(triple.subject) as NamedNode,
@@ -374,7 +374,7 @@ export default class Graph {
     }
 
     toArray():QuadExt[] {
-        return this.graph.toArray()
+        return Array.from(this.graph)
     }
 
     clone():Graph {
@@ -388,7 +388,7 @@ export default class Graph {
     async serializeN3():Promise<string> {
 
 	return await streamToString(
-		new (formats.serializers.get('text/n3').Impl)(this.graph.toStream())
+		new ((formats as any).serializers.get('text/n3').Impl)(this.graph.toStream())
 	)
 
     }
@@ -396,7 +396,7 @@ export default class Graph {
     async serializeTurtle():Promise<string> {
 
 	return await streamToString(
-		new (formats.serializers.get('text/turtle').Impl)(this.graph.toStream())
+		new ((formats as any).serializers.get('text/turtle').Impl)(this.graph.toStream())
 	)
 
     }
@@ -404,7 +404,7 @@ export default class Graph {
     async serializeJSONLD():Promise<string> {
 
 	return await streamToString(
-		new (formats.serializers.get('application/ld+json').Impl)(this.graph.toStream())
+		new ((formats as any).serializers.get('application/ld+json').Impl)(this.graph.toStream())
 	)
 
     }

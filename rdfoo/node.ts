@@ -1,5 +1,5 @@
 
-import rdf = require('rdf-ext')
+import rdf from 'rdf-ext'
 
 import NamedNode = require('rdf-ext/lib/NamedNode')
 import { Term } from '@rdfjs/types'

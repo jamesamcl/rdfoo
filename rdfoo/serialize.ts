@@ -52,7 +52,7 @@ export default function serialize(
         subjectToElement.set(subject, subjectElem)
     }
 
-    for(let triple of graph.graph.toArray()) {
+    for(let triple of graph.graph) {
 
         let s = nodeToURI(triple.subject)
 

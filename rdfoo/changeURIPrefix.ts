@@ -5,15 +5,13 @@ import DatasetExt = require('rdf-ext/lib/Dataset');
 
 export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 
-    let triples = graph.graph.toArray()
-
     let newGraph:DatasetExt = rdf.graph([])
 
     let prefixes:Set<string> = new Set()
 
     let identityMap = new Map()
 
-    for(let triple of triples) {
+    for(let triple of graph.graph) {
 
         // is this triple of the form   <s> a <o>  ?
         if(triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
@@ -28,7 +26,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
         }
     }
 
-    for(let triple of triples) {
+    for(let triple of graph.graph) {
 
         let subject = triple.subject
         let predicate = triple.predicate
@@ -62,7 +60,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
             }
         }
 
-        newGraph.add(rdf.triple(subject, predicate, object))
+        newGraph.add(rdf.quad(subject, predicate, object))
 
     }
 
