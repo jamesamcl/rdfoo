@@ -1,11 +1,15 @@
 
 import Graph from './Graph'
-import rdf = require('rdf-ext')
+import rdf from 'rdf-ext'
+
+import * as triple from './triple'
+import * as node from './node'
+
 import DatasetExt = require('rdf-ext/lib/Dataset');
 
 export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 
-    let newGraph:DatasetExt = rdf.graph([])
+    let newGraph:DatasetExt = rdf.dataset([])
 
     let prefixes:Set<string> = new Set()
 
@@ -16,7 +20,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
         // is this triple of the form   <s> a <o>  ?
         if(triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
 
-            // is the object one of the specified top levels?
+            // is the object one of the specified top level types?
             if(topLevels.has(triple.object.value)) {
 
                 let subjectPrefix = prefix(triple.subject.value)
@@ -25,6 +29,9 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
             }
         }
     }
+
+    console.log('changeUriPrefix: prefixes are ' + JSON.stringify(Array.from(prefixes)))
+    console.log('changeUriPrefix: new prefix ' + newPrefix)
 
     for(let triple of graph.graph) {
 
@@ -70,10 +77,18 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
     return identityMap
 
-    // TODO currently only works for SBOL compliant URIs
-    // 
     function prefix(uri:string) {
 
+	let hasNamespace = triple.objectUri(
+		graph.matchOne(node.createUriNode(uri), 'http://sbols.org/v3#hasNamespace', null)
+	)
+
+	if(hasNamespace) {
+		return hasNamespace
+	}
+
+	// TODO currently only works for SBOL compliant URIs
+	// 
         let n = 0
 
         for(let i = uri.length - 1; i > 0; -- i) {

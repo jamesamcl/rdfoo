@@ -1,5 +1,6 @@
 
 import * as node from './node'
+import rdf from 'rdf-ext'
 
 export function subjectUri(triple:any):string|undefined {
 
@@ -59,6 +60,10 @@ export function objectString(triple:any):string|undefined {
 
     return node.toString(triple.object)
 
+}
+
+export function fromSPO(s:any, p:any, o:any) {
+	return rdf.quad(s, p, o)
 }
 
 

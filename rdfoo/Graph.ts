@@ -226,7 +226,7 @@ export default class Graph {
         })
 
 
-        this.graph.removeMatches( s, p, o)
+        this.graph.deleteMatches( s, p, o)
 
         w.forEach((uri: string) => {
             this.touchSubject(uri)
@@ -263,8 +263,8 @@ export default class Graph {
     purgeSubject(s:Node):void {
 
         //console.log('purge ' + subject)
-        this.graph.removeMatches(s, null, null)
-        this.graph.removeMatches(null, null, s)
+        this.graph.deleteMatches(s, null, null)
+        this.graph.deleteMatches(null, null, s)
     }
 
     replaceSubject(oldSubject:Node, newSubject:Node) {
@@ -275,7 +275,7 @@ export default class Graph {
         
         for(let triple of this.graph) {
 
-            newGraph.add(rdf.triple(
+            newGraph.add(rdf.quad(
                 replace(triple.subject) as NamedNode,
                 replace(triple.predicate) as NamedNode,
                 replace(triple.object)
@@ -378,7 +378,7 @@ export default class Graph {
     }
 
     clone():Graph {
-        return new Graph(this.graph.toArray())
+        return new Graph(this.graph.clone())
     }
 
     serializeXML() {
@@ -407,6 +407,14 @@ export default class Graph {
 		new ((formats as any).serializers.get('application/ld+json').Impl)(this.graph.toStream())
 	)
 
+    }
+
+    filter(test:(quad:QuadExt)=>boolean):Graph {
+	return new Graph(this.graph.filter(test))
+    }
+
+    map(fn:(quad:QuadExt)=>QuadExt):Graph {
+	return new Graph(this.graph.map(fn))
     }
 
 

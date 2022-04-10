@@ -77,15 +77,15 @@ export function toString(node:any|undefined):string|undefined {
     if(node === undefined)
         return
 
-    if(node.interfaceName !== 'Literal') {
+    if(node.termType !== 'Literal') {
 
         console.error(JSON.stringify(node))
 
-        throw new Error('String node must be a literal; instead got ' + node.interfaceName)
+        throw new Error('String node must be a literal; instead got ' + node.termType)
 
     }
 
-    return node.nominalValue
+    return node.value
 
 }
 
