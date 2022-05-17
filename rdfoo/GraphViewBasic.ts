@@ -4,7 +4,7 @@ import Facade from "./Facade";
 import * as triple from './triple'
 import * as node from './node'
 
-import rdf = require('rdf-ext')
+import rdf from 'rdf-ext'
 
 export default class GraphViewBasic extends GraphView {
 
