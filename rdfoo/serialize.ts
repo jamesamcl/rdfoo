@@ -17,9 +17,12 @@ export default function serialize(
     preferredTypeNamespace:string
 ):string {
 
+	console.log('cows')
+
     let prefixes:Map<string,string> = new Map(defaultPrefixes)
     let prefixesUsed:Map<string,boolean> = new Map()
 
+    prefixes.set('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf')
     prefixesUsed.set('rdf', true)
 
     let subjectToElement = new Map()
