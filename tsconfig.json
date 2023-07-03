@@ -8,6 +8,9 @@
 		"alwaysStrict": true,
 		"strictNullChecks": true,
 		"module": "commonjs",
+		"isolatedModules": true,
+		"emitDeclarationOnly": true,
+		"esModuleInterop": true,
 		"paths": {
 		}
 	},

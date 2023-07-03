@@ -16,5 +16,7 @@ import rdf from 'rdf-ext'
 let namedNode = rdf.namedNode
 let literal = rdf.literal
 
-export { Graph, GraphView, GraphViewHybrid, GraphViewBasic, Watcher, Facade, node, triple, serialize, changeURIPrefix, identifyFiletype, Filetype, parseRDF, rdf, namedNode, literal, Node, Edge }
+export { Graph, GraphView, GraphViewHybrid, GraphViewBasic, Facade, node, triple, serialize, changeURIPrefix, identifyFiletype, Filetype, parseRDF, rdf, namedNode, literal }
+export type { Watcher, Node, Edge }
+
 

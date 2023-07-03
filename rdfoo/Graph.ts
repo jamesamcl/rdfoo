@@ -15,7 +15,7 @@ import Literal = require('rdf-ext/lib/Literal');
 import BlankNode = require('rdf-ext/lib/BlankNode');
 import VariableExt = require('rdf-ext/lib/Variable');
 
-import formats = require('./formats')
+import formats from './formats'
 
 import streamToString = require('stream-to-string')
 import QuadExt = require('rdf-ext/lib/Quad');

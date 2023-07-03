@@ -40,4 +40,4 @@ formats.serializers.set('application/ld+json', new CustomJsonLdSerializer())
 // formats.serializers.set('text/n3', new N3.Writer())
 // formats.serializers.set('text/turtle', new N3.Writer())
 
-export default formats
+export default formats 
